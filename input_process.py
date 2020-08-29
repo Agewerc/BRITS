@@ -1,10 +1,9 @@
 # coding: utf-8
-
 import os
 import re
 import numpy as np
 import pandas as pd
-import ujson as json
+import json
 
 patient_ids = []
 
@@ -17,36 +16,36 @@ for filename in os.listdir('./raw'):
 
 out = pd.read_csv('./raw/Outcomes-a.txt').set_index('RecordID')['In-hospital_death']
 
-# we select 35 attributes which contains enough non-values
-attributes = ['DiasABP', 'HR', 'Na', 'Lactate', 'NIDiasABP', 'PaO2', 'WBC', 'pH', 'Albumin', 'ALT', 'Glucose', 'SaO2',
-              'Temp', 'AST', 'Bilirubin', 'HCO3', 'BUN', 'RespRate', 'Mg', 'HCT', 'SysABP', 'FiO2', 'K', 'GCS',
-              'Cholesterol', 'NISysABP', 'TroponinT', 'MAP', 'TroponinI', 'PaCO2', 'Platelets', 'Urine', 'NIMAP',
-              'Creatinine', 'ALP']
+# we select 32 attributes which contains enough non-values
+attributes = ['Count_SB_12_14_F', 'Count_SB_12_14_M', 'Count_SB_15_17_F', 'Count_SB_15_17_M', 'Count_SB_18_21_F',
+              'Count_SB_18_21_M', 'Count_SB_22_25_F', 'Count_SB_22_25_M', 'Count_SO_12_14_F', 'Count_SO_12_14_M',
+              'Count_SO_15_17_F', 'Count_SO_15_17_M','Count_SO_18_21_F', 'Count_SO_18_21_M', 'Count_SO_22_25_F',
+              'Count_SO_22_25_M', 'Count_PB_12_14_F', 'Count_PB_12_14_M', 'Count_PB_15_17_F', 'Count_PB_15_17_M',
+              'Count_PB_18_21_F', 'Count_PB_18_21_M', 'Count_PB_22_25_F', 'Count_PB_22_25_M', 'Count_PO_12_14_F',
+              'Count_PO_12_14_M', 'Count_PO_15_17_F', 'Count_PO_15_17_M', 'Count_PO_18_21_F', 'Count_PO_18_21_M',
+              'Count_PO_22_25_F', 'Count_PO_22_25_M']
 
-# mean and std of 35 attributes
-mean = np.array([59.540976152469405, 86.72320413227443, 139.06972964987443, 2.8797765291788986, 58.13833409690321,
-                 147.4835678885565, 12.670222585415166, 7.490957887101613, 2.922874149659863, 394.8899400819931,
-                 141.4867570064675, 96.66380228136883, 37.07362841054398, 505.5576196473552, 2.906465787821709,
-                 23.118951553526724, 27.413004968675743, 19.64795551193981, 2.0277491155660416, 30.692432164676188,
-                 119.60137167841977, 0.5404785381886381, 4.135790642787733, 11.407767149315339, 156.51746031746032,
-                 119.15012244292181, 1.2004983498349853, 80.20321011673151, 7.127188940092161, 40.39875518672199,
-                 191.05877024038804, 116.1171573535279, 77.08923183026529, 1.5052390166989214, 116.77122488658458])
+# mean and std of 32 attributes
+mean = np.array([15.733462, 20.382101, 40.754455, 17.385384, 110.835219, 60.082982, 63.085587,
+                 36.448417, 54.677560, 71.199158, 98.524251, 59.913393, 198.919923, 105.699935, 119.354486,
+                 60.026871, 21.281217, 28.194668, 36.192066, 29.076904, 77.179518, 40.969107, 44.864202, 24.634217,
+                 15.144098, 15.585943, 33.367874, 17.383078, 88.188980, 45.809123, 53.371937, 28.930397])
 
-std = np.array(
-    [13.01436781437145, 17.789923096504985, 5.185595006246348, 2.5287518090506755, 15.06074282896952, 85.96290370390257,
-     7.649058756791069, 8.384743923130074, 0.6515057685658769, 1201.033856726966, 67.62249645388543, 3.294112002091972,
-     1.5604879744921516, 1515.362517984297, 5.902070316876287, 4.707600932877377, 23.403743427107095, 5.50914416318306,
-     0.4220051299992514, 5.002058959758486, 23.730556355204214, 0.18634432509312762, 0.706337033602292,
-     3.967579823394297, 45.99491531484596, 21.97610723063014, 2.716532297586456, 16.232515568438338, 9.754483687298688,
-     9.062327978713556, 106.50939503021543, 170.65318497610315, 14.856134327604906, 1.6369529387005546,
-     133.96778334724377])
+std = np.array([14.73718198, 16.30789303, 34.97983056, 17.71797247, 97.61718022, 51.31159879, 60.07866337,
+                33.37581949, 63.34272858, 84.27032439, 98.35693433,	58.51026789, 205.5317975, 104.6786201,
+                133.4268325, 66.3258888, 23.98738471, 32.39421896, 36.94895975, 25.0891656, 76.32853259,
+                40.54558237, 48.86878893, 25.23397556, 13.45940474, 14.73307624, 28.13056665, 15.22136631,
+                76.20051778, 40.2220299, 47.12498547, 25.83551688])
+
+threshold = np.array([34.00, 41.00, 84.00, 39.00, 235.00, 127.00, 137.00, 78.00, 124.00, 164.10, 229.00,
+                      139.20, 460.00, 242.00, 262.00, 133.00, 49.00, 66.00, 84.00, 62.00, 172.00, 93.00, 99.00,
+                      54.00, 32.00, 34.00, 69.00, 37.00, 185.00, 98.00, 111.10, 62.00])
 
 fs = open('./json/json', 'w')
 
 def to_time_bin(x):
     h, m = map(int, x.split(':'))
     return h
-
 
 def parse_data(x):
     x = x.set_index('Parameter').to_dict()['Value']
@@ -58,8 +57,8 @@ def parse_data(x):
             values.append(x[attr])
         else:
             values.append(np.nan)
-    return values
 
+    return values
 
 def parse_delta(masks, dir_):
     if dir_ == 'backward':
@@ -69,9 +68,9 @@ def parse_delta(masks, dir_):
 
     for h in range(48):
         if h == 0:
-            deltas.append(np.ones(35))
+            deltas.append(np.ones(32))
         else:
-            deltas.append(np.ones(35) + (1 - masks[h]) * deltas[-1])
+            deltas.append(np.ones(32) + (1 - masks[h]) * deltas[-1])
 
     return np.array(deltas)
 
@@ -94,7 +93,6 @@ def parse_rec(values, masks, evals, eval_masks, dir_):
 
     return rec
 
-
 def parse_id(id_):
     data = pd.read_csv('./raw/{}.txt'.format(id_))
     # accumulate the records within one hour
@@ -104,6 +102,7 @@ def parse_id(id_):
 
     # merge all the metrics within one hour
     for h in range(48):
+
         evals.append(parse_data(data[data['Time'] == h]))
 
     evals = (np.array(evals) - mean) / std
@@ -113,8 +112,18 @@ def parse_id(id_):
     evals = evals.reshape(-1)
 
     # randomly eliminate 10% values as the imputation ground-truth
-    indices = np.where(~np.isnan(evals))[0].tolist()
-    indices = np.random.choice(indices, len(indices) // 10)
+    indices = []
+
+    for i in range(len(evals)):
+
+        if not np.isnan([evals[i]]) == True:
+
+            if evals[i] > threshold[i % 32]:
+
+                indices.append(i)
+
+    # indices = np.where(~np.isnan(evals))[0].tolist()
+    # indices = np.random.choice(indices, len(indices) // 10)
 
     values = evals.copy()
     values[indices] = np.nan
@@ -130,7 +139,7 @@ def parse_id(id_):
 
     label = out.loc[int(id_)]
 
-    rec = {'label': label}
+    rec = {'label': int(label)}
 
     # prepare the model for both directions
     rec['forward'] = parse_rec(values, masks, evals, eval_masks, dir_='forward')
@@ -150,4 +159,3 @@ for id_ in patient_ids:
         continue
 
 fs.close()
-
